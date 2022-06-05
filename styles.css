@@ -1,0 +1,172 @@
+/* Variables */
+:root{
+    --verde: #81B23A;
+    --verdeClaro: #107e12;
+    --gris: rgb(55 65 81);
+    --fondo: rgb(243 244 246); 
+    --naranja: #FD7E14;
+    --blanco: #fff;
+}
+/* Globales */
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+html{
+    font-size: 62.5%; 
+    font-family: 'Poppins', sans-serif;
+}
+body{
+    font-size: 1.6rem;
+    background-color: var(--fondo);
+}
+[class$="__container"]{
+    max-width: 120rem;
+    width: 90%;
+    margin: 0 auto;
+}
+[class$="__heading"]{
+    /* color: rgb(79 70 229); */
+    font-size: 2.2;
+}
+[class$="__span"]{
+    color: var(--verde);
+}
+[class^="pedido__"]{
+    margin-bottom: 1rem;
+}
+button{
+    border: none;
+    font-family: 'Poppins' sans-serif;
+    padding: 1rem 2rem;
+    background-color: var(--verde);
+    color: var(--blanco);
+    border-radius: .5rem;
+    margin-top: 1rem;
+    transition: .4s ease;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+button:hover{
+    cursor: pointer;
+    background-color: var(--verdeClaro);
+}
+a{
+    text-decoration: none;
+    color: #000;
+}
+h2{
+    text-align: center;
+    color: var(--verde);
+    text-transform: uppercase;
+}
+input, select{
+    padding: .5rem .5rem;
+    margin: 1rem 0;
+    width: 60%;
+}
+@media (min-width: 992px) { 
+    input, select{
+        padding: .5rem 1rem;
+        margin: 1rem 0;
+        width: 80%;
+    }
+}
+.border-red{
+    border: 2px solid rgb(153 27 27);
+}
+/* Estilos de las alertas */
+.alert{
+    width: 80%;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+    border-radius: .5rem;
+}
+.error{
+    background-color: rgb(153 27 27);
+}
+.success{
+    background-color: rgb(7, 177, 21);
+}
+/* Estilos del formulario */
+.content{
+    margin: 4rem 0;
+}
+.content__heading{
+    text-align: center;
+}
+.content__alert{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem 0;
+}
+.content__flex{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+@media (min-width: 992px) { 
+    .content__flex{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5rem;
+        position: relative;
+    }
+}
+.form{
+    background-color: var(--blanco);
+    border-radius: .4rem;
+    padding: 2rem 4rem;
+    height: 50rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+@media (min-width: 992px) { 
+    .form{
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+}
+.form__field{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+/* Estilos a pedidos */
+.pedidos{
+    width: 50%;
+    height: 80rem;
+    overflow-y: scroll;
+}
+@media (min-width: 992px) { 
+    .pedidos{
+        position: absolute;
+        top: -2rem;
+        right: 6rem;
+    }
+}
+/* Estilos de cada pedido */
+.pedido{
+    background-color: var(--blanco);    border-radius: .4rem;
+    padding: 2rem 4rem;
+    margin: 2rem 0;
+    width: 100%;
+}
+.pedido__heading{
+    font-weight: 400;
+    text-align: center;
+    font-size: 2.3rem;
+    color: var(--naranja);
+}
+.pedido__buttons{
+    display: flex;
+    justify-content: space-around;
+}

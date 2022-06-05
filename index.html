@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <title>Listado de Ordenes</title>
+</head>
+<body>
+    <main class="content">
+        <h1 class="content__heading">Listado de <span class="content__span">Ordenes</span></h1>
+        <div class="content__container">
+            <div class="content__alert"></div>
+            <div class="content__flex">
+                <form action="" class="form">
+                    <h2 class="form__heading">Productos</h2>
+                    <div class="form__field">
+                        <label for="sku" class="form__label">Identificador: </label>
+                        <input type="text" id="sku" class="form__input form__input-sku"  placeholder="TEST-1">
+                    </div>
+                    <div class="form__field">
+                        <label for="name" class="form__label">Nombre: </label>
+                        <input type="text" id="name" class="form__input form__input-nombre" placeholder="Camisa de manga larga">
+                    </div>
+                    <div class="form__field">
+                        <label for="price" class="form__label">Precio: </label>
+                        <input type="text" id="price" class="form__input form__input-precio" placeholder="400">
+                    </div>
+                    <div class="form__field">
+                        <label for="quantity" class="form__label ">Cantidad: </label>
+                        <select name="quantity" id="quantity" class="form__input-cantidad">
+                            <option value="" disabled selected>-- Seleccione --</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="form__button">Agregar Producto</button>
+                </form>
+                <div class="pedidos">
+                    <h2 class="pedidos__heading">Pedidos</h2>
+                    <div class="pedidos__result">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="./app.js"></script>
+</body>
+</html>
