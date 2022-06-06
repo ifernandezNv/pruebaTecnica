@@ -50,8 +50,11 @@ function addProduct(newOrders){
         console.log(bandera);
         newOrders = [...newOrders, bandera];
         console.log(newOrders);
+        showResult(newOrders);
     }
-    showResult(newOrders);
+    setTimeout(() => {
+        resetObj();
+    }, 2000);
 }
 
 // Función que selecciona la orden por modificar
@@ -60,7 +63,7 @@ function editOrder(number){
     editando = true;
     console.log(editando);
     const editHeading = document.querySelector('.content__edit');
-    editHeading.innerHTML = `Editando el pedido: ${number}`;
+    editHeading.innerHTML = `Editando el pedido: <span class="edit__span">${number}</span>`;
     ordersResult.forEach( order => {
         if(order.number == number){
             newOrders = order;
@@ -69,11 +72,9 @@ function editOrder(number){
     document.querySelector('.form__button').addEventListener('click', ()=>{
         addProduct(newOrders);
     });
+    resetObj();
 }
 
-function mostrarValor(input){
-    console.log(input.value);
-}
 // Función que revisa el formulario de producto
 function validateForm(e){
     e.preventDefault();
@@ -103,13 +104,11 @@ function validateForm(e){
         console.log(productObj);
         const editHeading = document.querySelector('.content__edit');
         showAlert('success', 'Agregando Producto');
-        resetObj();
         editHeading.textContent = '';   
         editando = false;
         return;
     }
     showAlert('error', 'No se están agregando productos a alguna orden');
-    resetObj();
 }
 
 // Función que coloca el borde del input vacío en rojo
@@ -144,23 +143,6 @@ function showResult(orders){
         orderHeading.classList.add('pedido__heading');
         orderHeading.innerHTML = `Pedido: <span class="heading__span">${number}</span>`;
 
-        // Contenedor de cada producto
-        const pedidoContent = document.createElement('div');
-        pedidoContent.classList.add('pedido__content');
-
-        // Contenido de los productos
-        const skuOrder =  document.createElement('p');
-        skuOrder.classList.add('pedido__sku');
-
-        const nameOrder =  document.createElement('p');
-        nameOrder.classList.add('pedido__name');
-
-        const priceOrder =  document.createElement('p');
-        priceOrder.classList.add('pedido__price');
-
-        const quantityOrder =  document.createElement('p');
-        quantityOrder.classList.add('pedido__quantity');
-
         // Contenedor de los botones
         const divButtons = document.createElement('div');
         const editButton = document.createElement('button');
@@ -176,27 +158,45 @@ function showResult(orders){
         };
         editButton.dataset.number = order.number;
 
+        divOrder.appendChild(orderHeading);
         // Obteniendo los valores a inyectar en el html creado previamente
         order.items.forEach(item=>{
+            // Contenedor de cada producto
+            const pedidoContent = document.createElement('div');
+            pedidoContent.classList.add('pedido__content');
+
+            // Contenido de los productos
+            const skuOrder =  document.createElement('p');
+            skuOrder.classList.add('pedido__sku');
+
+            const nameOrder =  document.createElement('p');
+            nameOrder.classList.add('pedido__name');
+
+            const priceOrder =  document.createElement('p');
+            priceOrder.classList.add('pedido__price');
+
+            const quantityOrder =  document.createElement('p');
+            quantityOrder.classList.add('pedido__quantity');
+
             const {sku, name, price, quantity} = item;
+
             skuOrder.innerHTML = `Identificador: <span class="sku__span">${sku}</span>`;
             nameOrder.innerHTML = `Nombre: <span class="price__span">${name}</span>`;
             priceOrder.innerHTML = `Precio: <span class="price__span">$</span>${price}`;
             quantityOrder.innerHTML = `Cantidad: <span class="quantity__span">${quantity}</span>`;
-        })
+            pedidoContent.appendChild(skuOrder);
+            pedidoContent.appendChild(nameOrder);
+            pedidoContent.appendChild(priceOrder);
+            pedidoContent.appendChild(quantityOrder);
+            divOrder.appendChild(pedidoContent);
+        });
         //AppendChilds
-        divOrder.appendChild(orderHeading);
-        divOrder.appendChild(pedidoContent);
-        pedidoContent.appendChild(skuOrder);
-        pedidoContent.appendChild(nameOrder);
-        pedidoContent.appendChild(priceOrder);
-        pedidoContent.appendChild(quantityOrder);
-        divOrder.appendChild(pedidoContent);
         divButtons.appendChild(editButton);
         divButtons.appendChild(payButton);
         divOrder.appendChild(divButtons);
         divResult.appendChild(divOrder);
-    })
+    });
+
 }
 
 // Función que muestra una alerta
@@ -257,12 +257,12 @@ function clearHTML(){
 // Función que reinicia el objeto y los inputs
 function resetObj(){
     let {sku, name, quantity, price} = productObj;
-    sku = '';
-    name = '';
-    quantity = '';
-    price = '';
     skuInput.value = '';
     nameInput.value = '';
     quantityInput.value = '';
     priceInput.value = '';
+    sku = skuInput.value;
+    name = nameInput.value;
+    quantity = quantityInput.value;
+    price = priceInput.value;
 }
