@@ -1,14 +1,14 @@
 //Selectores
 const divResult = document.querySelector('.pedidos__result');
-const formProduct = document.querySelector('form');
+const formProduct = document.querySelector('.form');
 const divAlert = document.querySelector('.content__alert');
-const inputPrecio = document.querySelector('.form__input-precio');
+
 
 // Inputs del formulario
-const skuInput = document.querySelector('.form__input-sku');
-const nameInput = document.querySelector('.form__input-nombre');
-const quantityInput = document.querySelector('.form__input-cantidad');
-const priceInput = document.querySelector('.form__input-precio');
+const skuInput = document.querySelector('#sku');
+const nameInput = document.querySelector('#name');
+const quantityInput = document.querySelector('#quantity');
+const priceInput = document.querySelector('#price');
 //Bandera para determinar si se está editando un pedido
 let editando = false;
 
@@ -21,14 +21,13 @@ window.onload = ()=>{
     getOrders();
     formProduct.addEventListener('submit', validateForm);
     document.addEventListener('click', payOrder);
-    document.addEventListener('click', addProduct);
 }
 // Objeto del producto 
 let productObj = {
-    skuObj: '',
-    nameObj: '',
-    quantityObj: '',
-    priceObj: ''
+    sku: '',
+    name: '',
+    quantity: '',
+    price: ''
 }
 // Arreglo que almacenará las ordenes consultadas
 let ordersResult = [];
@@ -39,59 +38,78 @@ let request = {
     redirect: 'follow'
 }
 // Function que permite modificar la orden seleccionada
-function addProduct(e){
-    if(e.target.classList.contains('pedido__button-edit')){
-        editando = true;
-        editOrder(e.target.dataset.number);
-    }
-}
-
-// Función que agregar productos a la orden por modificar
-function editOrder(orderNumber){
+function addProduct(newOrders){
     formProduct.addEventListener('submit', validateForm);
-    const editHeading = document.querySelector('.content__edit');
-    editHeading.innerHTML = `Editando el pedido: ${orderNumber}`;
-    let newOrders = ordersResult.filter(order => order.number === orderNumber);
-    console.log(productObj);
-    if(productObj.skuObj !== ''){
-        console.log(productObj);
-        console.log('lleno');
-        newOrders[0].items = [...newOrders[0].items, productObj];
-        console.log(newOrders[0].items);
+    const existe = ordersResult.includes(newOrders);
+    const bandera = newOrders;
+    console.log(newOrders.items);
+    bandera.items = [...bandera.items, productObj];
+    if(existe){    
+        // newOrders[0].items = [...bandera[0].items, productObj];
+        newOrders = ordersResult.filter(order => order.number !== bandera.number);
+        console.log(bandera);
+        newOrders = [...newOrders, bandera];
+        console.log(newOrders);
     }
-    console.log(newOrders[0].items);
+    showResult(newOrders);
 }
 
+// Función que selecciona la orden por modificar
+function editOrder(number){
+    let newOrders;
+    editando = true;
+    console.log(editando);
+    const editHeading = document.querySelector('.content__edit');
+    editHeading.innerHTML = `Editando el pedido: ${number}`;
+    ordersResult.forEach( order => {
+        if(order.number == number){
+            newOrders = order;
+        }
+    });
+    document.querySelector('.form__button').addEventListener('click', ()=>{
+        addProduct(newOrders);
+    });
+}
+
+function mostrarValor(input){
+    console.log(input.value);
+}
 // Función que revisa el formulario de producto
 function validateForm(e){
     e.preventDefault();
     if(editando){
         if(skuInput.value === ''){
-            showAlert('error', 'El campo Identificador es obligatorio');
+            // showAlert('error', 'El campo Identificador es obligatorio');
             borderRed(skuInput);
+            // return;
         }else if(nameInput.value === ''){
-            showAlert('error', 'El campo Nombre es obligatorio');
+            // showAlert('error', 'El campo Nombre es obligatorio');
             borderRed(nameInput);
+            // return;
         }else if(quantityInput.value === ''){
-            showAlert('error', 'El campo Cantidad es obligatorio');
+            // showAlert('error', 'El campo Cantidad es obligatorio');
             borderRed(quantityInput);
+            // return;
         }else if(priceInput.value === ''){
-            showAlert('error', 'El campo Cantidad es obligatorio');
+            // showAlert('error', 'El campo Cantidad es obligatorio');
             borderRed(priceInput);
-            return;
+            // return;
         }
-        productObj.skuObj = skuInput.value;
-        productObj.nameObj = nameInput.value;
-        productObj.priceObj = priceInput.value;
-        productObj.quantityObj = quantityInput.value;
-
+        
+        productObj.sku = skuInput.value;
+        productObj.name = nameInput.value;
+        productObj.price = priceInput.value;
+        productObj.quantity = quantityInput.value;
+        console.log(productObj);
         const editHeading = document.querySelector('.content__edit');
         showAlert('success', 'Agregando Producto');
-        editHeading.textContent = '';
         resetObj();
+        editHeading.textContent = '';   
         editando = false;
+        return;
     }
     showAlert('error', 'No se están agregando productos a alguna orden');
+    resetObj();
 }
 
 // Función que coloca el borde del input vacío en rojo
@@ -153,11 +171,14 @@ function showResult(orders){
         payButton.dataset.number = order.number;
         editButton.classList.add('pedido__button', 'pedido__button-edit'); 
         editButton.textContent = "Editar";
+        editButton.onclick = ()=>{
+            editOrder(editButton.dataset.number);
+        };
         editButton.dataset.number = order.number;
+
         // Obteniendo los valores a inyectar en el html creado previamente
         order.items.forEach(item=>{
             const {sku, name, price, quantity} = item;
-            let {skuObj, nameObj, priceObj, quantityObj} = productObj;
             skuOrder.innerHTML = `Identificador: <span class="sku__span">${sku}</span>`;
             nameOrder.innerHTML = `Nombre: <span class="price__span">${name}</span>`;
             priceOrder.innerHTML = `Precio: <span class="price__span">$</span>${price}`;
@@ -204,10 +225,28 @@ function showAlert(type, content){
 function payOrder(e){
     if(e.target.classList.contains('pedido__button-pay')){
         const orderId = e.target.dataset.number;
-        console.log(orderId);
+        const divSpinner = document.createElement('div');
+        divSpinner.classList.add('sk-cube-grid');
+        divSpinner.innerHTML= `
+            <div class="sk-cube sk-cube1"></div>
+            <div class="sk-cube sk-cube2"></div>
+            <div class="sk-cube sk-cube3"></div>
+            <div class="sk-cube sk-cube4"></div>
+            <div class="sk-cube sk-cube5"></div>
+            <div class="sk-cube sk-cube6"></div>
+            <div class="sk-cube sk-cube7"></div>
+            <div class="sk-cube sk-cube8"></div>
+            <div class="sk-cube sk-cube9"></div>
+        `;
+        document.querySelector('.spinner').appendChild(divSpinner);
+        setTimeout(() => {
+            divSpinner.remove();
+            showAlert('success', `Se pagó el pedido: ${e.target.dataset.number}`);
+        }, 4000);
+        ordersResult = ordersResult.filter(order => order.number !== e.target.dataset.number);
+        showResult(ordersResult);
     }
 }
-
 
 // Función que limpia el HTML generado previamente
 function clearHTML(){
