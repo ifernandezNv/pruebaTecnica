@@ -6,9 +6,9 @@ const inputPrecio = document.querySelector('.form__input-precio');
 
 // Inputs del formulario
 const skuInput = document.querySelector('.form__input-sku');
-const nombreInput = document.querySelector('.form__input-nombre');
-const cantidadInput = document.querySelector('.form__input-cantidad');
-const precioInput = document.querySelector('.form__input-precio');
+const nameInput = document.querySelector('.form__input-nombre');
+const quantityInput = document.querySelector('.form__input-cantidad');
+const priceInput = document.querySelector('.form__input-precio');
 //Bandera para determinar si se está editando un pedido
 let editando = false;
 
@@ -21,13 +21,14 @@ window.onload = ()=>{
     getOrders();
     formProduct.addEventListener('submit', validateForm);
     document.addEventListener('click', payOrder);
+    document.addEventListener('click', addProduct);
 }
 // Objeto del producto 
 let productObj = {
-    sku: '',
-    name: '',
-    quantity: '',
-    price: ''
+    skuObj: '',
+    nameObj: '',
+    quantityObj: '',
+    priceObj: ''
 }
 // Arreglo que almacenará las ordenes consultadas
 let ordersResult = [];
@@ -37,23 +38,62 @@ let request = {
     headers: header,
     redirect: 'follow'
 }
+// Function que permite modificar la orden seleccionada
+function addProduct(e){
+    if(e.target.classList.contains('pedido__button-edit')){
+        editando = true;
+        editOrder(e.target.dataset.number);
+    }
+}
+
+// Función que agregar productos a la orden por modificar
+function editOrder(orderNumber){
+    formProduct.addEventListener('submit', validateForm);
+    const editHeading = document.querySelector('.content__edit');
+    editHeading.innerHTML = `Editando el pedido: ${orderNumber}`;
+    let newOrders = ordersResult.filter(order => order.number === orderNumber);
+    console.log(productObj);
+    if(productObj.skuObj !== ''){
+        console.log(productObj);
+        console.log('lleno');
+        newOrders[0].items = [...newOrders[0].items, productObj];
+        console.log(newOrders[0].items);
+    }
+    console.log(newOrders[0].items);
+}
+
 // Función que revisa el formulario de producto
 function validateForm(e){
     e.preventDefault();
-    if(skuInput.value === ''){
-        showAlert('error', 'El campo Identificador es obligatorio');
-        borderRed(skuInput);
-    }else if(nombreInput.value === ''){
-        showAlert('error', 'El campo Nombre es obligatorio');
-        borderRed(nombreInput);
-    }else if(cantidadInput.value === ''){
-        showAlert('error', 'El campo Cantidad es obligatorio');
-        borderRed(cantidadInput);
-    }else{
-        showAlert('success', 'Agregando Producto');
-    }
+    if(editando){
+        if(skuInput.value === ''){
+            showAlert('error', 'El campo Identificador es obligatorio');
+            borderRed(skuInput);
+        }else if(nameInput.value === ''){
+            showAlert('error', 'El campo Nombre es obligatorio');
+            borderRed(nameInput);
+        }else if(quantityInput.value === ''){
+            showAlert('error', 'El campo Cantidad es obligatorio');
+            borderRed(quantityInput);
+        }else if(priceInput.value === ''){
+            showAlert('error', 'El campo Cantidad es obligatorio');
+            borderRed(priceInput);
+            return;
+        }
+        productObj.skuObj = skuInput.value;
+        productObj.nameObj = nameInput.value;
+        productObj.priceObj = priceInput.value;
+        productObj.quantityObj = quantityInput.value;
 
+        const editHeading = document.querySelector('.content__edit');
+        showAlert('success', 'Agregando Producto');
+        editHeading.textContent = '';
+        resetObj();
+        editando = false;
+    }
+    showAlert('error', 'No se están agregando productos a alguna orden');
 }
+
 // Función que coloca el borde del input vacío en rojo
 function borderRed(input){
     input.classList.add('border-red');
@@ -67,15 +107,16 @@ async function getOrders(){
     const url = `https://eshop-deve.herokuapp.com/api/v2/orders`;
     const result = await fetch(url, request);
     const response = await result.json();
-    const orders = await response.orders;
-    showResult(orders);
+    ordersResult = await response.orders;
+    showResult(ordersResult);
 }
 
 // Función que permite mostrar el resultado de la consulta en el HTML
 function showResult(orders){
-    // clearHTML();
+    clearHTML();
     orders.forEach(order=>{
-
+        let {number} = productObj;
+        number = order.number;
         // Contenedor de la orden (contenedor general)
         const divOrder = document.createElement('div');
         divOrder.classList.add('pedido');
@@ -83,7 +124,7 @@ function showResult(orders){
         // Contenido de cada orden
         const orderHeading = document.createElement('h3');
         orderHeading.classList.add('pedido__heading');
-        orderHeading.innerHTML = `Pedido: <span class="heading__span">${order.number}</span>`;
+        orderHeading.innerHTML = `Pedido: <span class="heading__span">${number}</span>`;
 
         // Contenedor de cada producto
         const pedidoContent = document.createElement('div');
@@ -92,6 +133,9 @@ function showResult(orders){
         // Contenido de los productos
         const skuOrder =  document.createElement('p');
         skuOrder.classList.add('pedido__sku');
+
+        const nameOrder =  document.createElement('p');
+        nameOrder.classList.add('pedido__name');
 
         const priceOrder =  document.createElement('p');
         priceOrder.classList.add('pedido__price');
@@ -109,17 +153,21 @@ function showResult(orders){
         payButton.dataset.number = order.number;
         editButton.classList.add('pedido__button', 'pedido__button-edit'); 
         editButton.textContent = "Editar";
+        editButton.dataset.number = order.number;
         // Obteniendo los valores a inyectar en el html creado previamente
         order.items.forEach(item=>{
-            const {sku, price, quantity} = item;
+            const {sku, name, price, quantity} = item;
+            let {skuObj, nameObj, priceObj, quantityObj} = productObj;
             skuOrder.innerHTML = `Identificador: <span class="sku__span">${sku}</span>`;
-            priceOrder.innerHTML = `Precio: <span class="price__span">$</span>${price}`
+            nameOrder.innerHTML = `Nombre: <span class="price__span">${name}</span>`;
+            priceOrder.innerHTML = `Precio: <span class="price__span">$</span>${price}`;
             quantityOrder.innerHTML = `Cantidad: <span class="quantity__span">${quantity}</span>`;
         })
         //AppendChilds
         divOrder.appendChild(orderHeading);
         divOrder.appendChild(pedidoContent);
         pedidoContent.appendChild(skuOrder);
+        pedidoContent.appendChild(nameOrder);
         pedidoContent.appendChild(priceOrder);
         pedidoContent.appendChild(quantityOrder);
         divOrder.appendChild(pedidoContent);
@@ -169,13 +217,13 @@ function clearHTML(){
 }
 // Función que reinicia el objeto y los inputs
 function resetObj(){
-    const {sku, name, quantity, price} = productObj;
+    let {sku, name, quantity, price} = productObj;
     sku = '';
     name = '';
     quantity = '';
     price = '';
     skuInput.value = '';
-    nombreInput.value = '';
-    cantidadInput.value = '';
-    precioInput.value = '';
+    nameInput.value = '';
+    quantityInput.value = '';
+    priceInput.value = '';
 }

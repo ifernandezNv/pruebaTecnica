@@ -76,6 +76,9 @@ input, select{
 .border-red{
     border: 2px solid rgb(153 27 27);
 }
+.hide{
+    display: hidden;
+}
 /* Estilos de las alertas */
 .alert{
     width: 80%;
