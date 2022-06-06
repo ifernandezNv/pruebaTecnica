@@ -40,21 +40,31 @@ let request = {
 // Function que permite modificar la orden seleccionada
 function addProduct(newOrders){
     formProduct.addEventListener('submit', validateForm);
-    const existe = ordersResult.includes(newOrders);
-    const bandera = newOrders;
-    console.log(newOrders.items);
-    bandera.items = [...bandera.items, productObj];
-    if(existe){    
-        // newOrders[0].items = [...bandera[0].items, productObj];
-        newOrders = ordersResult.filter(order => order.number !== bandera.number);
+    console.log(newOrders);
+    if(newOrders.items.length > 0){
+        console.log(productObj);
+        const existe = ordersResult.includes(newOrders);
+        const bandera = newOrders;
+        console.log(newOrders.items);
+        console.log(productObj);
+        bandera.items = [...bandera.items, productObj];
         console.log(bandera);
-        newOrders = [...newOrders, bandera];
-        console.log(newOrders);
-        showResult(newOrders);
+        console.log(productObj);
+        if(existe){
+            newOrders = ordersResult.filter(order => order.number !== bandera.number);
+            console.log(bandera);
+            newOrders = [...newOrders, bandera];
+            console.log(newOrders);
+            showResult(newOrders);
+        }
+        showAlert('success', 'Agregando Producto');
+        setTimeout(() => {
+            resetObj();
+        }, 3000);
+        return;
     }
-    setTimeout(() => {
-        resetObj();
-    }, 2000);
+    showAlert('error', 'Todos los campos son obligatorios');
+    
 }
 
 // Función que selecciona la orden por modificar
@@ -80,23 +90,26 @@ function validateForm(e){
     e.preventDefault();
     if(editando){
         if(skuInput.value === ''){
-            // showAlert('error', 'El campo Identificador es obligatorio');
+            showAlert('error', 'El campo Identificador es obligatorio');
             borderRed(skuInput);
-            // return;
+            resetObj();
+            return;
         }else if(nameInput.value === ''){
-            // showAlert('error', 'El campo Nombre es obligatorio');
+            showAlert('error', 'El campo Nombre es obligatorio');
             borderRed(nameInput);
-            // return;
+            resetObj();
+            return;
         }else if(quantityInput.value === ''){
-            // showAlert('error', 'El campo Cantidad es obligatorio');
+            showAlert('error', 'El campo Cantidad es obligatorio');
             borderRed(quantityInput);
-            // return;
+            resetObj();
+            return;
         }else if(priceInput.value === ''){
-            // showAlert('error', 'El campo Cantidad es obligatorio');
+            showAlert('error', 'El campo Cantidad es obligatorio');
             borderRed(priceInput);
-            // return;
+            resetObj();
+            return;
         }
-        
         productObj.sku = skuInput.value;
         productObj.name = nameInput.value;
         productObj.price = priceInput.value;
@@ -108,7 +121,7 @@ function validateForm(e){
         editando = false;
         return;
     }
-    showAlert('error', 'No se están agregando productos a alguna orden');
+    showAlert('error', 'Ninguna orden está siendo modificada, por favor selecciona una');
 }
 
 // Función que coloca el borde del input vacío en rojo

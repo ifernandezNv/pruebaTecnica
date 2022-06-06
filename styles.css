@@ -148,6 +148,7 @@ input, select{
     padding: 1rem;
     text-align: center;
     border-radius: .5rem;
+    text-transform: uppercase;
 }
 .error{
     background-color: rgb(153 27 27);
