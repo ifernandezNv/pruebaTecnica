@@ -162,6 +162,9 @@ input, select{
 .content__heading{
     text-align: center;
 }
+.content__edit{
+    color: #000;
+}
 .content__alert{
     display: flex;
     justify-content: center;
